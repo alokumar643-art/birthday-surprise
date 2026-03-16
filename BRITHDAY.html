@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Troll Birthday Surprise</title>
+<style>
+body{margin:0;font-family:Arial, sans-serif;background:linear-gradient(120deg,#ff9a9e,#fad0c4,#ffd1ff,#c2ffd8);background-size:400% 400%;animation:bgmove 10s infinite alternate;overflow:hidden;text-align:center}
+@keyframes bgmove{0%{background-position:left}100%{background-position:right}}
+.layer{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px}
+.hidden{display:none}
+h1{font-size:48px;color:#ff2e88;animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+button{padding:14px 28px;font-size:20px;border:none;border-radius:12px;background:#ff2e88;color:white;cursor:pointer;margin-top:20px;box-shadow:0 8px 18px rgba(0,0,0,0.2)}
+button:hover{background:#e60073}
+.cake{font-size:100px;animation:bounce 1.5s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-15px)}}
+.escape{position:absolute}
+canvas{background:#111;border-radius:10px;margin-top:20px}
+</style>
+</head>
+<body>
+
+<!-- Layer 1 -->
+<div class="layer" id="layer1">
+<h1>🎁 Birthday Surprise</h1>
+<p>Enter the birthday person's name</p>
+<input id="name" placeholder="Enter Name" style="padding:10px;font-size:16px;border-radius:8px;border:1px solid #ccc">
+<br>
+<button onclick="nextLayer(1)">Start Surprise 🎉</button>
+</div>
+
+<!-- Layer 2 -->
+<div class="layer hidden" id="layer2">
+<h1>⏳ Loading Birthday Magic...</h1>
+<p>Still loading... please wait 😂</p>
+<button onclick="nextLayer(2)">Continue</button>
+</div>
+
+<!-- Layer 3 Button Game -->
+<div class="layer hidden" id="layer3">
+<h1>😈 Catch The Button</h1>
+<p>Try clicking the button</p>
+<button class="escape" id="escapeBtn">Catch Me 😂</button>
+<button onclick="nextLayer(3)">Skip Game</button>
+</div>
+
+<!-- Layer 4 Cake -->
+<div class="layer hidden" id="layer4">
+<div class="cake">🎂</div>
+<h1 id="birthdayMsg"></h1>
+<button onclick="nextLayer(4)">Next Surprise</button>
+</div>
+
+<!-- Layer 5 Retro Mini Game -->
+<div class="layer hidden" id="layer5">
+<h1>🕹 Birthday Mini Game</h1>
+<p>Jump over the blocks (press SPACE)</p>
+<canvas id="game" width="500" height="200"></canvas>
+<button onclick="nextLayer(5)">Skip Game</button>
+</div>
+
+<!-- Layer 6 Final Wishes -->
+<div class="layer hidden" id="layer6">
+<h1>🎂 HAPPY BIRTHDAY 🎉</h1>
+<p id="wishText" style="font-size:22px;max-width:600px"></p>
+<button onclick="launchParty()">Start Music 🎵</button>
+</div>
+
+<audio id="music" loop>
+<source src="https://www2.cs.uic.edu/~i101/SoundFiles/HappyBirthday.mid" type="audio/midi">
+</audio>
+
+<script>
+
+function nextLayer(current){
+
+if(current===1){
+let name=document.getElementById("name").value;
+if(name==="") name="Friend";
+document.getElementById("birthdayMsg").innerHTML="🎂 Happy Birthday " + name + " 🎉";
+}
+
+let currentLayer=document.getElementById("layer"+current);
+let next=document.getElementById("layer"+(current+1));
+
+currentLayer.classList.add("hidden");
+next.classList.remove("hidden");
+
+if(current===5){startTyping();}
+
+}
+
+// Escape button
+const escapeBtn=document.getElementById("escapeBtn");
+if(escapeBtn){
+escapeBtn.addEventListener("mouseover",function(){
+escapeBtn.style.top=Math.random()*80+"vh";
+escapeBtn.style.left=Math.random()*80+"vw";
+});
+}
+
+// Typing animation wishes
+const wishes=`🎉 Wishing you a day filled with happiness and a year filled with joy!\n\n🎂 May your birthday be full of laughter, love, and lots of cake!\n\n🌟 May all your dreams come true this year.\n\n🎁 Another year older, wiser, and more awesome!\n\n💫 May success, health, and happiness always stay with you.`;
+
+function startTyping(){
+let i=0;
+const el=document.getElementById("wishText");
+
+function type(){
+if(i<wishes.length){
+el.innerHTML+=wishes.charAt(i)==='\n'?'<br>':wishes.charAt(i);
+i++;
+setTimeout(type,35);
+}
+}
+
+type();
+}
+
+// Retro mini game
+const canvas=document.getElementById("game");
+if(canvas){
+const ctx=canvas.getContext("2d");
+let player={x:50,y:150,w:20,h:20,vy:0};
+let gravity=1;
+let obstacle={x:500,y:160,w:20,h:20};
+
+function gameLoop(){
+ctx.clearRect(0,0,500,200);
+
+player.vy+=gravity;
+player.y+=player.vy;
+
+if(player.y>150){player.y=150;player.vy=0}
+
+obstacle.x-=5;
+if(obstacle.x<-20){obstacle.x=500}
+
+ctx.fillStyle="yellow";
+ctx.fillRect(player.x,player.y,player.w,player.h);
+
+ctx.fillStyle="red";
+ctx.fillRect(obstacle.x,obstacle.y,obstacle.w,obstacle.h);
+
+if(player.x<obstacle.x+20 && player.x+20>obstacle.x && player.y<obstacle.y+20 && player.y+20>obstacle.y){
+obstacle.x=500;
+}
+
+requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+document.addEventListener("keydown",e=>{
+if(e.code==="Space" && player.y>=150){player.vy=-15}
+});
+}
+
+function launchParty(){
+alert("🎉 Happy Birthday! Enjoy the music!");
+document.getElementById("music").play();
+}
+
+</script>
+
+</body>
+</html>
